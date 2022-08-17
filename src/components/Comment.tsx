@@ -1,7 +1,14 @@
 import Markdown from 'markdown-to-jsx';
 
 export const enum Status {
-    "active", "suspended"
+    ACTIVE = "active",
+    SUSPENDED= "suspended"
+}
+
+export interface NewCommentInterface {
+  title: string;
+  content: string;
+  status: Status
 }
 
 export interface CommentInterface {
@@ -9,8 +16,8 @@ export interface CommentInterface {
     title: string;
     content: string;
     status: Status;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 const Comment = (comment: CommentInterface): JSX.Element => {

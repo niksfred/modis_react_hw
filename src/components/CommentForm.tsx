@@ -1,11 +1,35 @@
 import React, {useState} from "react";
-import { CommentInterface } from "./Comment";
+import { addComment } from "../helpers";
+import { NewCommentInterface, CommentInterface, Status } from "./Comment";
+
+const constructNewComment = (comment: NewCommentInterface): CommentInterface => {
+
+    const newId = 1;
+    const currentDate = new Date();
+    const currentDateFormated = currentDate.getDate() + "/"
+                + (currentDate.getMonth()+1)  + "/" 
+                + currentDate.getFullYear() + " @ "  
+                + currentDate.getHours() + ":"  
+                + currentDate.getMinutes() + ":" 
+                + currentDate.getSeconds();
+
+    const newComment: CommentInterface = {
+        id: newId,
+        title: comment.title,
+        content: comment.content,
+        status: comment.status,
+        createdAt: currentDateFormated,
+        updatedAt: currentDateFormated,
+    }
+
+    return newComment;
+}
 
 const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
 
-    const  [formData, setFormData] = useState({title: "", content: "", status: "active"});
+    const  [formData, setFormData] = useState({title: "", content: "", status: Status.ACTIVE});
 
-    const isRadioChecked = (value:string) : boolean => formData.status === value
+    const isRadioChecked = (value:Status) : boolean => formData.status === value
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setFormData({...formData, [e.target.name]: e.target.value})
@@ -18,7 +42,9 @@ const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
         console.log(formData)
-        setFormData({title: "", content: "", status: "active"})
+        setFormData({title: "", content: "", status: Status.ACTIVE})
+        const newComment = constructNewComment(formData);
+        addComment(newComment);
     }
 
   return (
@@ -29,10 +55,10 @@ const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
         <div className="flex justify-between w-full p-2">
             <p>Status: </p>
             <div>
-            <input onChange={handleInputChange} type="radio" name="status" value="active" checked={isRadioChecked("active")} /> <label>Active</label>
+            <input onChange={handleInputChange} type="radio" name="status" value={Status.ACTIVE} checked={isRadioChecked(Status.ACTIVE)} /> <label>Active</label>
             </div>
             <div>
-            <input onChange={handleInputChange} type="radio" name="status" value="suspended" checked={isRadioChecked("suspended")} /> <label>Suspended</label>
+            <input onChange={handleInputChange} type="radio" name="status" value={Status.SUSPENDED} checked={isRadioChecked(Status.SUSPENDED)} /> <label>Suspended</label>
             </div>
         </div>
         <button type="submit" className="px-4 py-2 bg-slate-100 rounded-xl text-slate-900 m-4">Submit</button>
