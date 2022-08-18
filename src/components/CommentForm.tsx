@@ -1,29 +1,6 @@
 import React, {useState} from "react";
-import { addComment } from "../helpers";
-import { NewCommentInterface, CommentInterface, Status } from "./Comment";
-
-const constructNewComment = (comment: NewCommentInterface): CommentInterface => {
-
-    const newId = 1;
-    const currentDate = new Date();
-    const currentDateFormated = currentDate.getDate() + "/"
-                + (currentDate.getMonth()+1)  + "/" 
-                + currentDate.getFullYear() + " @ "  
-                + currentDate.getHours() + ":"  
-                + currentDate.getMinutes() + ":" 
-                + currentDate.getSeconds();
-
-    const newComment: CommentInterface = {
-        id: newId,
-        title: comment.title,
-        content: comment.content,
-        status: comment.status,
-        createdAt: currentDateFormated,
-        updatedAt: currentDateFormated,
-    }
-
-    return newComment;
-}
+import { addComment, constructNewComment } from "../helpers";
+import { CommentInterface, Status } from "./Comment";
 
 const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
 
@@ -42,9 +19,9 @@ const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
         console.log(formData)
-        setFormData({title: "", content: "", status: Status.ACTIVE})
         const newComment = constructNewComment(formData);
         addComment(newComment);
+        setFormData({title: "", content: "", status: Status.ACTIVE})
     }
 
   return (
