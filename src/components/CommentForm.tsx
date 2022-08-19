@@ -1,9 +1,28 @@
 import React, {useState} from "react";
-import { addComment, constructNewComment, getComments } from "../helpers";
-import { CommentInterface, Status } from "./Comment";
+import { addComment } from "../helpers";
+import { NewCommentInterface, CommentInterface, Status } from "./Comment";
 
-interface CommentFormProps {
-    setComments: React.Dispatch<React.SetStateAction<CommentInterface[]>>;
+const constructNewComment = (comment: NewCommentInterface): CommentInterface => {
+
+    const newId = 1;
+    const currentDate = new Date();
+    const currentDateFormated = currentDate.getDate() + "/"
+                + (currentDate.getMonth()+1)  + "/" 
+                + currentDate.getFullYear() + " @ "  
+                + currentDate.getHours() + ":"  
+                + currentDate.getMinutes() + ":" 
+                + currentDate.getSeconds();
+
+    const newComment: CommentInterface = {
+        id: newId,
+        title: comment.title,
+        content: comment.content,
+        status: comment.status,
+        createdAt: currentDateFormated,
+        updatedAt: currentDateFormated,
+    }
+
+    return newComment;
 }
 
 const CommentForm: React.FC<CommentFormProps> = ({setComments}: CommentFormProps): JSX.Element => {
@@ -22,10 +41,10 @@ const CommentForm: React.FC<CommentFormProps> = ({setComments}: CommentFormProps
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
+        console.log(formData)
         setFormData({title: "", content: "", status: Status.ACTIVE})
         const newComment = constructNewComment(formData);
         addComment(newComment);
-        setComments(getComments())
     }
 
   return (
