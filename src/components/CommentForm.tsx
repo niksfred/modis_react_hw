@@ -1,31 +1,12 @@
 import React, {useState} from "react";
-import { addComment } from "../helpers";
-import { NewCommentInterface, CommentInterface, Status } from "./Comment";
+import { addComment, constructNewComment, getComments } from "../helpers";
+import { CommentInterface, Status } from "./Comment";
 
-const constructNewComment = (comment: NewCommentInterface): CommentInterface => {
-
-    const newId = 1;
-    const currentDate = new Date();
-    const currentDateFormated = currentDate.getDate() + "/"
-                + (currentDate.getMonth()+1)  + "/" 
-                + currentDate.getFullYear() + " @ "  
-                + currentDate.getHours() + ":"  
-                + currentDate.getMinutes() + ":" 
-                + currentDate.getSeconds();
-
-    const newComment: CommentInterface = {
-        id: newId,
-        title: comment.title,
-        content: comment.content,
-        status: comment.status,
-        createdAt: currentDateFormated,
-        updatedAt: currentDateFormated,
-    }
-
-    return newComment;
+interface CommentFormProps {
+    setComments: React.Dispatch<React.SetStateAction<CommentInterface[]>>;
 }
 
-const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
+const CommentForm: React.FC<CommentFormProps> = ({setComments}: CommentFormProps): JSX.Element => {
 
     const  [formData, setFormData] = useState({title: "", content: "", status: Status.ACTIVE});
 
@@ -41,15 +22,15 @@ const CommentForm: React.FC = (comment: CommentInterface | {}): JSX.Element => {
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
-        console.log(formData)
         setFormData({title: "", content: "", status: Status.ACTIVE})
         const newComment = constructNewComment(formData);
         addComment(newComment);
+        setComments(getComments())
     }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center w-[320px] text-white m-4">
-        <h2 className="text-2xl mb-4">Create new comment :</h2>
+        <h2 className="text-2xl mb-4">Create new comment:</h2>
         <input onChange={handleInputChange} value={formData.title} type="text" id="title" name="title" placeholder="Enter your title here..." className="p-2 w-full bg-slate-100 rounded-xl text-slate-900 mb-4" />
         <textarea onChange={handleTextAreaChange} value={formData.content} id="content" name="content" placeholder="Enter your content here..." className="p-2 w-full h-[240px] bg-slate-100 rounded-xl text-slate-900"></textarea>
         <div className="flex justify-between w-full p-2">
