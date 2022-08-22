@@ -3,11 +3,12 @@ import { FilterOptions } from '../App';
 import Comment, { CommentInterface, Status } from './Comment';
 
 interface CommentsInterface {
-    comments: Array<CommentInterface>
+    comments: Array<CommentInterface>;
+    setComments: React.Dispatch<React.SetStateAction<CommentInterface[]>>;
     filterState: React.ComponentState;
 }
 
-const Comments = ({comments, filterState}: CommentsInterface): JSX.Element => {
+const Comments = ({comments, setComments, filterState}: CommentsInterface): JSX.Element => {
 
     const filteredComments : Array<CommentInterface> = comments.filter(comment => {
         let keep = true;
@@ -26,7 +27,7 @@ const Comments = ({comments, filterState}: CommentsInterface): JSX.Element => {
 
   return (
     <div>
-        {sortedComments.map(comment => <Comment key={comment.id} {...comment} />)}
+        {sortedComments.map(comment => <Comment key={comment.id} comment={comment} setComments={setComments} />)}
     </div>
   )
 }

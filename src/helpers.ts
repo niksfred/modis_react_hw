@@ -11,6 +11,20 @@ export const addComment = (newComment: CommentInterface): void => {
     localStorage.setItem("comments", JSON.stringify(existingComments));
 }
 
+export const deleteComment = (id: number): Array<CommentInterface> => {
+    const existingComments = getComments();
+    const newComments = existingComments.filter(comment => comment.id !== id);
+    localStorage.setItem("comments", JSON.stringify(newComments));
+    return newComments
+}
+
+export const editComment = (edditedComment: CommentInterface): void => {
+    const currentComments = getComments();
+    const commentIndex = currentComments.findIndex(comment => comment.id === edditedComment.id);
+    currentComments[commentIndex] = edditedComment;
+    localStorage.setItem("comments", JSON.stringify(currentComments));
+}
+
 export const constructNewComment = (comment: NewCommentInterface): CommentInterface => {
 
     let newId

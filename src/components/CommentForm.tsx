@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { addComment, constructNewComment, getComments } from "../helpers";
+import { addComment, constructNewComment, editComment, getComments } from "../helpers";
 import { CommentInterface, Status } from "./Comment";
 
 interface CommentFormProps {
     setComments: React.Dispatch<React.SetStateAction<CommentInterface[]>>;
+    comment?: CommentInterface;
+    setIsFormOpen?: React.Dispatch<React.SetStateAction<React.ComponentState>>;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({setComments}: CommentFormProps): JSX.Element => {
-
-    const  [formData, setFormData] = useState({title: "", content: "", status: Status.ACTIVE});
+const CommentForm: React.FC<CommentFormProps> = ({comment, setComments, setIsFormOpen}: CommentFormProps): JSX.Element => {
+    const  [formData, setFormData] = useState(comment ? {title: comment.title, content: comment.content, status: comment.status} : {title: "", content: "", status: Status.ACTIVE});
 
     const isRadioChecked = (value:Status) : boolean => formData.status === value
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
@@ -20,17 +22,25 @@ const CommentForm: React.FC<CommentFormProps> = ({setComments}: CommentFormProps
 
     const handleSubmit = (e: React.FormEvent): void => {
         e.preventDefault();
-        console.log(formData)
-        setFormData({title: "", content: "", status: Status.ACTIVE})
+        if (comment) {
+            const editedComment = comment;
+            comment.title =  formData.title
+            comment.content = formData.content
+            comment.status = formData.status
+            comment.updatedAt = new Date()
+            editComment(editedComment)
+            setIsFormOpen?.(false)
+        } else {
         const newComment = constructNewComment(formData);
         addComment(newComment);
-        setComments(getComments())
+    }
+    setComments(getComments())
+    setFormData({title: "", content: "", status: Status.ACTIVE})
     }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center w-[320px] text-white m-4">
-        <h2 className="text-2xl mb-4">Create new comment :</h2>
-        <h2 className="text-2xl mb-4">Create new comment:</h2>
+        <h2 className="text-2xl mb-4">{comment? "Edit comment" : "Create new comment:"}</h2>
         <input onChange={handleInputChange} value={formData.title} type="text" id="title" name="title" placeholder="Enter your title here..." className="p-2 w-full bg-slate-100 rounded-xl text-slate-900 mb-4" />
         <textarea onChange={handleTextAreaChange} value={formData.content} id="content" name="content" placeholder="Enter your content here..." className="p-2 w-full h-[240px] bg-slate-100 rounded-xl text-slate-900"></textarea>
         <div className="flex justify-between w-full p-2">

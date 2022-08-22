@@ -22,7 +22,7 @@ function App() {
       </header>
       <main>
         <CommentsFilter setFilterState={setFilterState}  />
-        <Comments comments={comments} filterState={filterState} />
+        <Comments comments={comments} setComments={setComments} filterState={filterState} />
       </main>
     </div>
   );
